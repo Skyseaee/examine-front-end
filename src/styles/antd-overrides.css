@@ -1,0 +1,144 @@
+/* 全局覆盖 */
+.ant-layout {
+    background: #f0f2f5;
+  }
+  
+  /* 头部导航 */
+  .ant-layout-header {
+    background: #1890ff !important;
+    padding: 0 24px !important;
+    height: 64px;
+    line-height: 64px;
+  }
+  
+  .ant-menu-dark {
+    background: transparent !important;
+  }
+  
+  .ant-menu-dark .ant-menu-item-selected {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+  }
+  
+  /* 按钮样式 */
+  .ant-btn-primary {
+    background: #1890ff;
+    border-color: #1890ff;
+    box-shadow: 0 2px 0 rgba(24, 144, 255, 0.2);
+  }
+  
+  .ant-btn-danger {
+    background: #ff4d4f;
+    border-color: #ff4d4f;
+  }
+  
+  /* 表格样式 */
+  .ant-table {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .ant-table-thead > tr > th {
+    background: #fafafa !important;
+    font-weight: 600 !important;
+  }
+  
+  .ant-table-tbody > tr > td {
+    transition: all 0.3s;
+  }
+  
+  .ant-table-tbody > tr:hover > td {
+    background: #e6f7ff !important;
+  }
+  
+  /* 弹窗样式 */
+  .ant-modal-content {
+    border-radius: 8px !important;
+  }
+  
+  .ant-modal-header {
+    border-bottom: 1px solid #f0f0f0 !important;
+  }
+  
+  .ant-modal-title {
+    font-weight: 600 !important;
+  }
+  
+  /* 表单元素 */
+  .ant-input:focus,
+  .ant-input-focused {
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  }
+  
+  .ant-select-selector {
+    border-radius: 4px !important;
+  }
+  
+  /* 标签页 */
+  .ant-tabs-tab-btn {
+    font-weight: 500 !important;
+  }
+  
+  /* 审核专用样式 */
+  /* 题目预览区域 */
+  .exercise-preview {
+    padding: 16px;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  
+  .exercise-image {
+    max-width: 300px;
+    margin: 12px 0;
+    border: 1px solid #ddd;
+    padding: 4px;
+  }
+  
+  /* 审核操作栏 */
+  .review-actions-bar {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    padding: 16px;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  
+  /* 状态标签 */
+  .status-tag {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  
+  .status-tag.approved {
+    background: #f6ffed;
+    border: 1px solid #b7eb8f;
+    color: #52c41a;
+  }
+  
+  .status-tag.rejected {
+    background: #fff1f0;
+    border: 1px solid #ffa39e;
+    color: #ff4d4f;
+  }
+  
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .ant-table {
+      border-radius: 0;
+    }
+    
+    .ant-modal {
+      max-width: 95vw;
+    }
+    
+    .exercise-image {
+      max-width: 200px;
+    }
+  }

@@ -1,17 +1,52 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { Layout } from 'antd';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import PrivateRoute from './utils/PrivateRoute';
+import Login from './pages/Login';
+import FirstRoundReview from './pages/FirstRoundReview';
+import SecondRoundReview from './pages/SecondRoundReview';
+import FinalReview from './pages/FinalReview';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+const { Content } = Layout;
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+function App() {
+  return (
+    <Router>
+      <Layout style={{ minHeight: '100vh' }}>
+        <Header />
+        <Content style={{ padding: '24px' }}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <PrivateRoute requiredPrivilege={2}>
+                  <FirstRoundReview />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/second-review"
+              element={
+                <PrivateRoute requiredPrivilege={3}>
+                  <SecondRoundReview />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/final-review"
+              element={
+                <PrivateRoute requiredPrivilege={4}>
+                  <FinalReview />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </Content>
+      </Layout>
+    </Router>
+  );
+}
+
+export default App;

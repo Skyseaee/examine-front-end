@@ -1,0 +1,23 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+  }
+  
+  .user-info {
+    color: white;
+    cursor: pointer;
+  }
+  
+  .review-modal .ant-modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  
+  .exercise-preview img {
+    max-width: 200px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    padding: 5px;
+  }

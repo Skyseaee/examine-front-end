@@ -1,25 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import PrivateRoute from './utils/PrivateRoute';
+import Login from './pages/Login';
+import FirstRoundReview from './pages/FirstRoundReview';
+import SecondRoundReview from './pages/SecondRoundReview';
+import FinalReview from './pages/FinalReview';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => (
+  <Switch>
+    <Route path="/login" component={Login} />
+    <PrivateRoute exact path="/" component={FirstRoundReview} requiredPrivilege={2} />
+    <PrivateRoute path="/second-review" component={SecondRoundReview} requiredPrivilege={3} />
+    <PrivateRoute path="/final-review" component={FinalReview} requiredPrivilege={4} />
+  </Switch>
+);
 
 export default App;
