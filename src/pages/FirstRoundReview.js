@@ -17,20 +17,31 @@ const answerToLetters = (answer, exerciseType) => {
 
 // 根据题目类型判断阶段
 const getExerciseStage = (exerciseType) => {
-  if ([0, 1, 3].includes(exerciseType)) return '基础阶段';
+  if ([0, 1, 2, 3].includes(exerciseType)) return '基础阶段';
   if ([4, 5].includes(exerciseType)) return '强化阶段';
   if (exerciseType === 6) return '真题阶段';
   return '未知阶段';
 };
 
+const getStageLabel = (value) => {
+    const option = STAGE_OPTIONS.find(opt => opt.value === value);
+    return option ? option.label : '';
+  };
+
+const STAGE_OPTIONS = [
+    { value: 'keep', label: '不调整（保持原阶段）' },
+    { value: 'basic', label: '基础阶段' },
+    { value: 'intensive', label: '强化阶段' },
+    { value: 'real', label: '真题阶段' },
+];
+
 // 审核检查项配置
 const CHECKLIST_ITEMS = [
-  { label: '题目内容完整无误', key: 'content_complete' },
-  { label: '选项设置合理', key: 'options_reasonable' },
-  { label: '答案正确', key: 'answer_correct' },
-  { label: '解析详尽准确', key: 'explanation_clear' },
-  { label: '图片清晰且相关', key: 'images_clear' },
-  { label: '符合阶段难度', key: 'stage_appropriate' },
+  { label: '题目内容检查', key: 'content_complete' },
+  { label: '选项内容检查', key: 'options_reasonable' },
+  { label: '答案核实', key: 'answer_correct' },
+  { label: '解析内容检查', key: 'explanation_clear' },
+  { label: '图片检查', key: 'images_clear' },
 ];
 
 const FirstRoundReview = () => {
@@ -40,9 +51,10 @@ const FirstRoundReview = () => {
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [comment, setComment] = useState('');
   const [stageValidation, setStageValidation] = useState(true);
-  const [adjustedStage, setAdjustedStage] = useState(null);
+  const [adjustedStage, setAdjustedStage] = useState('keep');
   const [checklist, setChecklist] = useState({});
   const [loading, setLoading] = useState(false);
+  
 
   useEffect(() => {
     getCategories().then(res => setCategories(res.data));
@@ -79,12 +91,18 @@ const FirstRoundReview = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (isApproved) => {
     // 检查是否所有检查项都已完成
     const uncheckedItems = CHECKLIST_ITEMS.filter(item => !checklist[item.key]);
     if (uncheckedItems.length > 0) {
       message.warning(`请完成所有检查项: ${uncheckedItems.map(item => item.label).join(', ')}`);
       return;
+    }
+
+    let fullComment = comment;
+    if (adjustedStage !== 'keep') {
+        fullComment = `${comment}\n\n阶段调整建议: ${getStageLabel(adjustedStage)}`;
+        isApproved = false; // 阶段调整时默认不通过
     }
 
     setLoading(true);
@@ -94,8 +112,9 @@ const FirstRoundReview = () => {
       } else {
         await submitReview({
           exercise_id: selectedExercise.id,
-          comment,
-          is_first_round: 1
+          comment: fullComment,
+          is_first_round: 1,
+          valid: isApproved ? 1:0, // 1表示通过，0表示拒绝
         });
         message.success('审核提交成功');
         resetAfterSubmit();
@@ -188,16 +207,30 @@ const FirstRoundReview = () => {
         ]}
       />
 
-      <Modal
-        title={`题目审核 (ID: ${selectedExercise?.id})`}
-        width={800}
-        visible={!!selectedExercise}
-        onCancel={() => setSelectedExercise(null)}
-        footer={[
-            <Button key="reject" danger disabled={loading}>拒绝</Button>,
-            <Button key="approve" type="primary" loading={loading} onClick={handleSubmit}>通过</Button>
-        ]}
-      >
+    <Modal
+    title={`题目审核 (ID: ${selectedExercise?.id})`}
+    width={800}
+    visible={!!selectedExercise}
+    onCancel={() => setSelectedExercise(null)}
+    footer={[
+        <Button 
+        key="reject" 
+        danger 
+        loading={loading}
+        onClick={() => handleSubmit(false)} // 传递false表示拒绝
+        >
+        拒绝
+        </Button>,
+        <Button 
+        key="approve" 
+        type="primary" 
+        loading={loading} 
+        onClick={() => handleSubmit(true)} // 传递true表示通过
+        >
+        通过
+        </Button>
+    ]}
+    >
         {selectedExercise && (
           <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
             <div style={{ marginBottom: 16 }}>
@@ -237,15 +270,12 @@ const FirstRoundReview = () => {
               ))}
             </Row>
 
-            <Divider orientation="left">阶段调整</Divider>
+            <Divider orientation="left">阶段调整建议（调整后该题目将不通过审核）</Divider>
             <Select
               style={{ width: '100%', marginBottom: 16 }}
-              defaultValue={selectedExercise.first_id}
-              onChange={value => {
-                setAdjustedStage(value);
-                setStageValidation(value === selectedExercise.first_id);
-              }}
-              options={categories.map(c => ({ value: c.id, label: c.name }))}
+              value={adjustedStage}
+              onChange={setAdjustedStage}
+              options={STAGE_OPTIONS}
             />
 
             <Divider orientation="left">审核意见</Divider>
