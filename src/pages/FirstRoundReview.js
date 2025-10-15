@@ -20,6 +20,9 @@ const getExerciseStage = (exerciseType) => {
   if ([0, 1, 2, 3].includes(exerciseType)) return '基础阶段';
   if ([4, 5].includes(exerciseType)) return '强化阶段';
   if (exerciseType === 6) return '真题阶段';
+  if (exerciseType === 10) return '专项基础阶段';
+  if (exerciseType === 11) return '专项强化阶段';
+  if (exerciseType === 12) return '专项冲刺阶段';
   return '未知阶段';
 };
 
@@ -60,8 +63,16 @@ const FirstRoundReview = () => {
     getCategories().then(res => setCategories(res.data));
   }, []);
 
-  const loadExercises = (firstId) => {
-    getFirstExercises(firstId).then(res => setExercises(res.data)).catch(err => message.error('加载题目失败'));
+  const loadExercises = async (firstId) => {
+    setExercises([]); // 清空旧数据
+    setSelectedExercise(null); // 清空选中题目
+    try {
+      const res = await getFirstExercises(firstId);
+      setExercises(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      message.error('加载题目失败');
+      setExercises([]); // 确保为安全的空数组
+    }
   };
 
   const handleChecklistChange = (key, checked) => {
@@ -137,6 +148,18 @@ const FirstRoundReview = () => {
   const renderOptions = (exercise) => {
     if (!exercise.options) return null;
 
+    if(exercise.option_type === 1) {
+      return (
+        <div style={{ display: 'flex', gap: 8 }}>
+          {exercise.options.split('~+~').map((_, index) => (
+            <Tag key={index} color="blue">
+              {String.fromCharCode(65 + index)}
+            </Tag>
+          ))}
+        </div>
+      )
+    }
+
     const options = exercise.options.split('~+~');
     
     return options.map((option, index) => (
@@ -155,7 +178,7 @@ const FirstRoundReview = () => {
     return (
       <>
         <Divider orientation="left">答案解析</Divider>
-        <ReactMarkdown>{exercise.comments}</ReactMarkdown>
+        {exercise.option_type !== 1 && <ReactMarkdown>{exercise.comments}</ReactMarkdown>}
         {exercise.comment_img && (
           <Image src={exercise.comment_img} style={{ marginTop: 16 }} />
         )}
@@ -178,7 +201,7 @@ const FirstRoundReview = () => {
       <Table
         style={{ width: '80%' }}
         size="middle"
-        dataSource={exercises}
+        dataSource={exercises || {}}
         rowKey="id"
         columns={[
           { title: '题目ID', dataIndex: 'id', width: 100 },
@@ -234,16 +257,16 @@ const FirstRoundReview = () => {
         {selectedExercise && (
           <div style={{ maxHeight: '70vh', overflowY: 'auto' }}>
             <div style={{ marginBottom: 16 }}>
-              <Tag color="purple">题型: {['单选题', '多选题', '判断题'][selectedExercise.exercise_type]}</Tag>
-              <Tag color={selectedExercise.exercise_type === 6 ? 'red' : selectedExercise.exercise_type >= 4 ? 'orange' : 'green'}>
-                阶段: {getExerciseStage(selectedExercise.exercise_type)}
+              <Tag color="purple">题型: {['单选题', '多选题', '判断题'][selectedExercise?.exercise_type]}</Tag>
+              <Tag color={selectedExercise?.exercise_type === 6 ? 'red' : selectedExercise?.exercise_type >= 4 ? 'orange' : 'green'}>
+                阶段: {getExerciseStage(selectedExercise?.exercise_type)}
               </Tag>
             </div>
 
             <Divider orientation="left">题目内容</Divider>
-            <ReactMarkdown>{selectedExercise.question}</ReactMarkdown>
-            {selectedExercise.question_img && (
-              <Image src={selectedExercise.question_img} style={{ marginTop: 16 }} />
+            {selectedExercise?.option_type !== 1 && <ReactMarkdown>{selectedExercise?.question}</ReactMarkdown>}
+            {selectedExercise?.question_img && (
+              <Image src={selectedExercise?.question_img} style={{ marginTop: 16 }} />
             )}
 
             <Divider orientation="left">选项</Divider>
