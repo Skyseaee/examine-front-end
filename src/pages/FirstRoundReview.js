@@ -61,7 +61,19 @@ const FirstRoundReview = () => {
   }, []);
 
   const loadExercises = (firstId) => {
-    getFirstExercises(firstId).then(res => setExercises(res.data)).catch(err => message.error('加载题目失败'));
+    getFirstExercises(firstId)
+      .then(res => {
+        // 确保数据是数组，如果不是则设置为空数组
+        const data = Array.isArray(res.data) ? res.data : [];
+        setExercises(data);
+        if (data.length === 0) {
+          message.info('该科目暂无待审核题目');
+        }
+      })
+      .catch(err => {
+        message.error('加载题目失败');
+        setExercises([]); // 出错时也设置为空数组
+      });
   };
 
   const handleChecklistChange = (key, checked) => {

@@ -14,7 +14,7 @@ const PrivateRoute = ({
       {...rest}
       render={props =>
         user ? (
-          user.privilege >= requiredPrivilege ? (
+          !requiredPrivilege || user.privilege >= requiredPrivilege ? (
             <Component {...props} />
           ) : (
             <div style={{ padding: 24 }}>

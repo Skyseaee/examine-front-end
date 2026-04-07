@@ -13,9 +13,12 @@ const FinalReview = () => {
   const loadFinalExercises = async () => {
     try {
       const res = await api.get('/examine/get_final_exercises');
-      setFinalExercises(res.data);
+      // 确保数据是数组，如果不是则设置为空数组
+      const data = Array.isArray(res.data) ? res.data : [];
+      setFinalExercises(data);
     } catch (error) {
       console.error('加载终审题目失败:', error);
+      setFinalExercises([]); // 出错时也设置为空数组
     }
   };
 

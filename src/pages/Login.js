@@ -12,7 +12,7 @@ function parseJwt(token) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const payload = JSON.parse(atob(base64));
-      
+      console.log(payload);
       // 特别注意：用户数据在 payload.data 中
       return {
         exp: payload.exp,    // 过期时间戳

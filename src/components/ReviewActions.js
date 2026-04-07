@@ -16,9 +16,9 @@ const ReviewActions = ({
           onChange={onStageChange}
           style={{ width: 200 }}
           options={[
-            { label: '小学阶段', value: 1 },
-            { label: '初中阶段', value: 2 },
-            { label: '高中阶段', value: 3 }
+            { label: '基础阶段', value: 1 },
+            { label: '强化阶段', value: 2 },
+            { label: '冲刺阶段', value: 3 }
           ]}
         />
       )}

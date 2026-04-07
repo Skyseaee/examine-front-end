@@ -16,4 +16,8 @@ export const getCategories = () => api.get('/first/get_first_categories');
 export const getFirstExercises = (firstId) => api.get(`/exercise/get_exercise_by_firstID?first_id=${firstId}`);
 export const submitReview = (data) => api.post('/examine/insert_first_examine_record', data);
 
+export const searchExercisesAdmin = (params) => api.get('/exercise/admin/search', { params });
+export const updateExerciseAdmin = (id, data) => api.put(`/exercise/admin/update/${id}`, data);
+export const deleteExerciseAdmin = (id) => api.delete(`/exercise/admin/delete/${id}`);
+
 export {api};
