@@ -7,24 +7,28 @@ export const AuthProvider = ({ children }) => {
 
   // 初始化时检查本地存储（可选）
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token');
     if (token) {
-      // 这里可以添加验证 token 的逻辑（如 API 验证）
-      // 暂时模拟一个用户
-      setUser({ uid: 'demo', privilege: 2 });
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payload = JSON.parse(atob(base64));
+      setUser({
+        uid: payload.data.uid,
+        privilege: payload.data.privilege
+      });
     }
   }, []);
 
   const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    setUser({  // ✅ 只调用一次
+    localStorage.setItem('auth_token', token);
+    setUser({
       uid: userData.uid,
       privilege: userData.privilege
     });
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth_token');
     setUser(null);
   };
 

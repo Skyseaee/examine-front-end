@@ -41,6 +41,8 @@ const Login = () => {
 
         localStorage.setItem('auth_token', token);
 
+        console.log(tokenPayload);
+
         login({
           uid: response.data.uid || tokenPayload.uid,
           privilege: response.data.privilege || tokenPayload.privilege
