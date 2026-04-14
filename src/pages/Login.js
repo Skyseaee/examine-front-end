@@ -12,13 +12,12 @@ function parseJwt(token) {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const payload = JSON.parse(atob(base64));
-      console.log(payload);
-      // 特别注意：用户数据在 payload.data 中
+      console.log('Parsed JWT payload:', payload);
       return {
-        exp: payload.exp,    // 过期时间戳
-        iat: payload.iat,    // 签发时间戳
-        uid: payload.data.uid,          // 用户ID
-        privilege: payload.data.privilege  // 权限等级
+        exp: payload.exp,
+        iat: payload.iat,
+        uid: payload.data?.uid,
+        privilege: payload.data?.privilege
       };
     } catch (e) {
       console.error('Failed to parse JWT', e);
@@ -44,9 +43,11 @@ const Login = () => {
         console.log(tokenPayload);
 
         login({
-          uid: response.data.uid || tokenPayload.uid,
-          privilege: response.data.privilege || tokenPayload.privilege
+          uid: tokenPayload?.uid || response.data.uid,
+          privilege: tokenPayload?.privilege ?? response.data.privilege
         }, response.data.token);
+
+        console.log('Login - calling login with uid:', tokenPayload?.uid || response.data.uid, 'privilege:', tokenPayload?.privilege ?? response.data.privilege);
         history.push('/');
       }
     } catch (error) {

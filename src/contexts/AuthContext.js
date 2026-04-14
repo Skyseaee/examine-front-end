@@ -4,19 +4,30 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // 初始化时检查本地存储（可选）
   useEffect(() => {
     const token = localStorage.getItem('auth_token');
+    console.log('AuthContext useEffect - token exists:', !!token);
+    console.log('AuthContext useEffect - token value:', token);
     if (token) {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const payload = JSON.parse(atob(base64));
-      setUser({
-        uid: payload.data.uid,
-        privilege: payload.data.privilege
-      });
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(base64));
+        console.log('AuthContext - Full Token payload:', payload);
+        console.log('AuthContext - payload.data:', payload.data);
+        console.log('AuthContext - uid:', payload.data?.uid, 'privilege:', payload.data?.privilege);
+        setUser({
+          uid: payload.data?.uid,
+          privilege: payload.data?.privilege
+        });
+      } catch (e) {
+        console.error('Failed to parse token:', e);
+        localStorage.removeItem('auth_token');
+      }
     }
+    setLoading(false);
   }, []);
 
   const login = (userData, token) => {
@@ -32,15 +43,13 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  // ✅ 确保 value 包含所有需要的数据和方法
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// ✅ 更健壮的 useAuth Hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

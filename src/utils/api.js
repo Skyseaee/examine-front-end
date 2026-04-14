@@ -19,7 +19,7 @@ export const submitReview = (data) => api.post('/examine/insert_first_examine_re
 export const searchExercisesAdmin = (params) => api.get('/exercise/admin/search', { params });
 export const updateExerciseAdmin = (id, data) => api.put(`/exercise/admin/update/${id}`, data);
 export const deleteExerciseAdmin = (id) => api.delete(`/exercise/admin/delete/${id}`);
-export const batchUploadExercises = (formData) => api.post('/exercise/batch_upload', formData, {
+export const batchUploadExercises = (formData) => api.post('/exercise/batch-upload', formData, {
   headers: { 'Content-Type': 'multipart/form-data' }
 });
 

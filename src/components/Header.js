@@ -10,6 +10,12 @@ const AppHeader = () => {
   const { user, logout } = useAuth();
   const history = useHistory();
 
+  console.log('AppHeader - user object:', user);
+  console.log('AppHeader - privilege value:', user?.privilege);
+  console.log('AppHeader - privilege >= 1:', user?.privilege >= 1);
+  console.log('AppHeader - privilege >= 2:', user?.privilege >= 2);
+  console.log('AppHeader - privilege >= 3:', user?.privilege >= 3);
+
   const menu = (
     <Menu>
       <Menu.Item key="logout" onClick={() => {
